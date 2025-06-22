@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name', 'EqualLearn') }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #ffd5de;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .container {
+            max-width: 530px;
+            width: 92%;
+            padding: 40px 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            margin-top: 80px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .logo {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #444;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            color: #333;
+            font-size: 15px;
+            font-family: 'Quicksand', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #ff91a4;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 145, 164, 0.15);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #ff91a4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .btn:hover {
+            background: #ff7a92;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 145, 164, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-family: 'Quicksand', sans-serif;
+            color: #333;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .text-danger {
+            color: #ff5757;
+            margin-top: 6px;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 15px;
+            background: #fff5f6;
+            color: #ff5757;
+            border-radius: 8px;
+            border-left: 4px solid #ff91a4;
+            margin-bottom: 25px;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        .alert ul {
+            margin-left: 10px;
+            list-style-type: none;
+        }
+
+        .text-muted {
+            color: #777;
+            margin-top: 25px;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .link {
+            color: #ff91a4;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .link:hover {
+            color: #ff7a92;
+            text-decoration: underline;
+        }
+
+        /* Colorful shape decorations */
+        .shape {
+            position: absolute;
+            border-radius: 15px;
+            z-index: -1;
+        }
+
+        .shape-1 {
+            width: 75px;
+            height: 75px;
+            background-color: rgba(255, 145, 164, 0.25);
+            top: -15px;
+            right: -15px;
+            border-radius: 15px;
+        }
+
+        .shape-2 {
+            width: 100px;
+            height: 100px;
+            background-color: rgba(255, 220, 99, 0.2);
+            bottom: -25px;
+            left: -25px;
+            border-radius: 20px;
+        }
+
+        /* Header navigation */
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #444;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .login-btn {
+            background-color: #ff91a4;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background-color: #ff7a92;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header navigation similar to baby clothing site -->
+    <header class="header">
+        <div class="logo">Equal Learn</div>
+        <div class="nav-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="{{ route('login') }}" class="login-btn">{{ Route::currentRouteName() === 'login' ? 'Login' : 'Sign In' }}</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Decorative shapes -->
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+
+        {{ $slot }}
+    </div>
+</body>
+</html>

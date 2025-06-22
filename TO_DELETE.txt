@@ -1,0 +1,10 @@
+Redundant files to delete:
+- resources/views/layouts/auth.blade.php
+- resources/views/auth/login.blade.php.new
+- resources/views/auth/register.blade.php.new
+- resources/views/components/auth-layout.blade.php.new
+- resources/views/layouts/app.blade.new.php
+- resources/views/welcome.blade.php.new
+- resources/views/welcome_new.blade.php
+
+These files are either legacy, backup, or not used by the new component-based system.

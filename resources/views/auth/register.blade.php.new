@@ -1,0 +1,64 @@
+<x-auth-layout>
+    <h2 class="text-center text-2xl font-bold mb-6">Create your account</h2>
+
+    @if($errors->any())
+        <div class="alert">
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('register') }}" method="POST">
+        @csrf
+        <input type="hidden" name="role" value="{{ request()->query('role', 'student') }}">
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" required value="{{ old('name') }}">
+            @error('name')
+                <p class="text-danger">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email address</label>
+            <input id="email" name="email" type="email" autocomplete="email" required value="{{ old('email') }}">
+            @error('email')
+                <p class="text-danger">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required>
+            @error('password')
+                <p class="text-danger">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="password_confirmation">Confirm Password</label>
+            <input id="password_confirmation" name="password_confirmation" type="password" required>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn" style="width: 100%;">Register</button>
+        </div>
+    </form>
+
+    <p class="text-center mt-4">
+        Already have an account?
+        <a href="{{ route('login') }}" style="color: #3EA6FF; text-decoration: none;">
+            Sign in
+        </a>
+    </p>
+
+    <p class="text-center mt-4">
+        <a href="{{ route('welcome') }}" style="color: #3EA6FF; text-decoration: none;">
+            ← Back to role selection
+        </a>
+    </p>
+</x-auth-layout>
