@@ -17,22 +17,28 @@ Route::get('/', function(\Illuminate\Http\Request $request) {
     }
     return view('welcome');
 })->name('welcome');
+
 Route::get('/home', function(\Illuminate\Http\Request $request) {
     $categories = \App\Models\Category::all();
-    $videos = \App\Models\Video::with(['category', 'user'])
+    $countries = \App\Models\Country::orderBy('name')->get();
+    $videos = \App\Models\Video::with(['category', 'country', 'user'])
         ->where('is_approved', true)
         ->when($request->query('category'), function($query, $categoryId) {
             return $query->where('category_id', $categoryId);
+        })
+        ->when($request->query('country'), function($query, $countryId) {
+            return $query->where('country_id', $countryId);
         })
         ->when($request->query('search'), function($query, $search) {
             return $query->where('title', 'like', '%' . $search . '%');
         })
         ->latest()
         ->paginate(12);
-    
+
     $selectedCategory = $request->query('category') ? \App\Models\Category::find($request->query('category')) : null;
-    
-    return view('home', compact('categories', 'videos', 'selectedCategory'));
+    $selectedCountry = $request->query('country') ? \App\Models\Country::find($request->query('country')) : null;
+
+    return view('home', compact('categories', 'countries', 'videos', 'selectedCategory', 'selectedCountry'));
 })->name('home');
 
 // Redirect /videos to home since home now shows all videos
@@ -61,7 +67,7 @@ Route::middleware(['auth'])->group(function () {
         if (!$user) {
             return response()->json(['error' => 'Not authenticated']);
         }
-        
+
         return response()->json([
             'user_id' => $user->id,
             'user_email' => $user->email,
@@ -88,32 +94,81 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/dashboard', function () {
             return view('admin.dashboard');
         })->name('admin.dashboard');
-        
+
         // Category management
         Route::resource('/admin/categories', \App\Http\Controllers\Admin\CategoryController::class)
             ->names([
                 'index' => 'admin.categories.index',
                 'create' => 'admin.categories.create',
                 'store' => 'admin.categories.store',
+                'show' => 'admin.categories.show',
                 'edit' => 'admin.categories.edit',
                 'update' => 'admin.categories.update',
                 'destroy' => 'admin.categories.destroy'
             ]);
-        
+
         // User management
         Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
         Route::put('/admin/users/{user}/role', [\App\Http\Controllers\Admin\UserController::class, 'updateRole'])->name('admin.users.updateRole');
-        
+
         // System logs
         Route::get('/admin/logs', [\App\Http\Controllers\Admin\SystemLogController::class, 'index'])->name('admin.logs.index');
-        
+
         // Video management
         Route::get('/admin/videos', [\App\Http\Controllers\Admin\VideoController::class, 'index'])->name('admin.videos.index');
         Route::post('/admin/videos/{video}/approve', [\App\Http\Controllers\Admin\VideoController::class, 'approve'])->name('admin.videos.approve');
         Route::delete('/admin/videos/{video}/reject', [\App\Http\Controllers\Admin\VideoController::class, 'reject'])->name('admin.videos.reject');
         Route::post('/admin/videos/{video}/unapprove', [\App\Http\Controllers\Admin\VideoController::class, 'unapprove'])->name('admin.videos.unapprove');
+
+        // Country management
+        Route::resource('/admin/countries', \App\Http\Controllers\Admin\CountryController::class)
+            ->names([
+                'index' => 'admin.countries.index',
+                'create' => 'admin.countries.create',
+                'store' => 'admin.countries.store',
+                'edit' => 'admin.countries.edit',
+                'update' => 'admin.countries.update',
+                'destroy' => 'admin.countries.destroy'
+            ]);
     });
 });
 
-// Video show route - MUST come AFTER /videos/create to avoid conflicts
+// Video edit routes - MUST come BEFORE /videos/{video:slug} to avoid conflicts
+Route::middleware(['auth'])->group(function () {
+    Route::get('/videos/{video:slug}/edit', [VideoController::class, 'edit'])->name('videos.edit');
+    Route::put('/videos/{video:slug}', [VideoController::class, 'update'])->name('videos.update');
+
+    // Video like routes
+    Route::post('/videos/{video:slug}/like', [\App\Http\Controllers\VideoLikeController::class, 'toggle'])->name('videos.like');
+
+    // Profile management routes
+    Route::get('/profile', [\App\Http\Controllers\UserProfileController::class, 'show'])->name('profile.show');
+    Route::patch('/profile', [\App\Http\Controllers\UserProfileController::class, 'updateProfile'])->name('profile.update');
+    Route::patch('/profile/password', [\App\Http\Controllers\UserProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // Manual table creation routes (for missing tables)
+    Route::get('/create-system-logs-table', function() {
+        try {
+            \Illuminate\Support\Facades\DB::statement("
+                CREATE TABLE IF NOT EXISTS `system_logs` (
+                  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+                  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+                  `action` varchar(255) NOT NULL,
+                  `description` text NOT NULL,
+                  `ip_address` varchar(255) DEFAULT NULL,
+                  `created_at` timestamp NULL DEFAULT NULL,
+                  `updated_at` timestamp NULL DEFAULT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `system_logs_user_id_foreign` (`user_id`),
+                  CONSTRAINT `system_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ");
+            return 'System logs table created successfully!';
+        } catch (\Exception $e) {
+            return 'Error creating table: ' . $e->getMessage();
+        }
+    });
+});
+
+// Video show route - MUST come AFTER /videos/create and /videos/edit to avoid conflicts
 Route::get('/videos/{video:slug}', [VideoController::class, 'show'])->name('videos.show');

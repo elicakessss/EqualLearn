@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'EqualLearn') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Bubblegum+Sans&display=swap" rel="stylesheet">
     <style>
@@ -58,15 +59,25 @@
             width: 80px;
         }
 
-        .sidebar .equal-learn-title {
-            font-family: 'Bubblegum Sans', 'Comic Neue', cursive;
-            font-size: 2.2rem;
-            color: #ff91a4;
-            margin: 28px 0 18px 0;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 0 #fff7c2, 0 2px 8px #ffd5de;
-            text-align: center;
-            line-height: 1.1;
+        .sidebar .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0 15px 0;
+            padding: 0 10px;
+        }
+
+        .sidebar .logo {
+            max-width: 240px;
+            height: auto;
+            max-height: 150px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(255, 213, 222, 0.3));
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .logo:hover {
+            transform: scale(1.05);
         }
 
         .brand {
@@ -159,8 +170,8 @@
         }
 
         .search-container {
-            flex: 0 1 732px;
-            margin: 0 40px;
+            flex: 0 1 400px;
+            margin: 0 30px;
             position: relative;
         }
 
@@ -350,24 +361,20 @@
         }
     </style>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    @stack('styles')
 </head>
 <body>
     <div class="layout">
         <!-- Sidebar -->
         <nav class="sidebar">
-            <div class="equal-learn-title">Equal Learn</div>
+            <div class="logo-container">
+                <img src="{{ asset('images/logo.png') }}" alt="Equal Learn" class="logo">
+            </div>
             <div class="sidebar-section">
-                <a href="{{ route('home') }}" class="sidebar-link {{ request()->routeIs('home') && !request()->query('category') ? 'active' : '' }}">
+                <a href="{{ route('home') }}" class="sidebar-link {{ request()->routeIs('home') ? 'active' : '' }}">
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </a>
-                @foreach(\App\Models\Category::all() as $category)
-                <a href="{{ route('home', ['category' => $category->id]) }}"
-                   class="sidebar-link {{ request()->query('category') == $category->id ? 'active' : '' }}">
-                    <i class="fas fa-play-circle"></i>
-                    <span>{{ $category->name }}</span>
-                </a>
-                @endforeach
                 <a href="{{ url('/account') }}" class="sidebar-link {{ request()->is('account') ? 'active' : '' }}">
                     <i class="fas fa-user"></i>
                     <span>Account</span>
@@ -377,15 +384,19 @@
                 <div class="divider"></div>
                 <a href="{{ route('admin.categories.index') }}" class="sidebar-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                     <i class="fas fa-list"></i>
-                    <span>Category Management</span>
+                    <span>Categories</span>
+                </a>
+                <a href="{{ route('admin.countries.index') }}" class="sidebar-link {{ request()->routeIs('admin.countries.*') ? 'active' : '' }}">
+                    <i class="fas fa-globe"></i>
+                    <span>Countries</span>
                 </a>
                 <a href="{{ route('admin.videos.index') }}" class="sidebar-link {{ request()->routeIs('admin.videos.*') ? 'active' : '' }}">
                     <i class="fas fa-video"></i>
-                    <span>Video Management</span>
+                    <span>Videos</span>
                 </a>
                 <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
-                    <span>User Management</span>
+                    <span>Users</span>
                 </a>
                 <a href="{{ route('admin.logs.index') }}" class="sidebar-link {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
                     <i class="fas fa-clipboard-list"></i>
@@ -479,5 +490,6 @@
             }
         });
     </script>
+    @stack('scripts')
 </body>
 </html>

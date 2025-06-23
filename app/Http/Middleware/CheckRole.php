@@ -12,7 +12,7 @@ class CheckRole
     {
         \Log::info('CheckRole middleware called for route: ' . $request->getPathInfo());
         \Log::info('Required roles: ' . implode(', ', $roleNames));
-        
+
         if (!$request->user()) {
             \Log::info('User not authenticated');
             return redirect()->route('login')->with('error', 'Please log in to access this page.');
@@ -37,8 +37,8 @@ class CheckRole
         }
 
         \Log::info('User does not have any of the required roles');
-        return redirect()->route('home')->with('error', 
-            'Access denied. You need the "' . implode(' or ', $roleNames) . '" role. Your current roles: ' . 
+        return redirect()->route('home')->with('error',
+            'Access denied. You need the "' . implode(' or ', $roleNames) . '" role. Your current roles: ' .
             (empty($userRoles) ? 'none' : implode(', ', $userRoles))
         );
     }

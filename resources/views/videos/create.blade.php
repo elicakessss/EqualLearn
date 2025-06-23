@@ -34,6 +34,13 @@
                             <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                         @endforeach
                     </select>
+                    <label for="country_id">Country</label>
+                    <select name="country_id" id="country_id" required>
+                        <option value="">Choose a country</option>
+                        @foreach($countries as $country)
+                            <option value="{{ $country->id }}" {{ old('country_id') == $country->id ? 'selected' : '' }}>{{ $country->name }}</option>
+                        @endforeach
+                    </select>
                     <label for="thumbnail">Thumbnail</label>
                     <input type="file" name="thumbnail" id="thumbnail" accept="image/*" required>
                     <div id="thumbnail-preview-container" style="display:none;">
@@ -65,7 +72,7 @@
             margin: 0 auto;
         }
         .upload-form-container h1 {
-            font-family: 'Bubblegum Sans', 'Quicksand', sans-serif;
+            font-family: 'Quicksand', sans-serif;
             font-size: 2.2rem;
             color: #fe8a8b;
             margin-bottom: 1.2rem;

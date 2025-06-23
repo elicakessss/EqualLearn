@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(RoleSeeder::class);
+        $this->call(CountrySeeder::class);
 
         // Create admin user
         $admin = User::create([

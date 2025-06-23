@@ -5,11 +5,11 @@
                 <div class="p-6 text-gray-900">                    <!-- Header -->
                     <div class="admin-header-container">
                         <div class="admin-header-content">
-                            <h1>Category Management</h1>
-                            <p>Manage video categories for the platform</p>
+                            <h1>Country Management</h1>
+                            <p>Manage countries for the platform</p>
                         </div>                        <div class="admin-header-button">
-                            <button onclick="openCategoryModal()"
-                               class="icon-btn" title="Add Category">
+                            <button onclick="openCountryModal()"
+                               class="icon-btn" title="Add Country">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="white" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                                 </svg>
@@ -28,7 +28,7 @@
                         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                             {{ session('error') }}
                         </div>
-                    @endif                    <!-- Categories Table -->
+                    @endif                    <!-- Countries Table -->
                     <style>
                         /* Header alignment fix with stronger specificity */
                         .admin-header-container {
@@ -113,19 +113,28 @@
                         .admin-table tbody tr:hover {
                             background-color: #fff7c2;
                         }
-                        .category-avatar {
+                        .country-avatar {
                             width: 32px;
                             height: 32px;
-                            border-radius: 50%;
                             background: linear-gradient(135deg, #fe8a8b 0%, #fff7c2 100%);
-                            display: inline-flex;
+                            border-radius: 50%;
+                            display: flex;
                             align-items: center;
                             justify-content: center;
                             color: white;
                             font-weight: bold;
                             font-size: 12px;
                             margin-right: 12px;
-                        }                        .action-btn {
+                        }
+                        .country-code-badge {
+                            background: #fff7c2;
+                            color: #fe8a8b;
+                            padding: 4px 8px;
+                            border-radius: 8px;
+                            font-size: 12px;
+                            font-weight: 600;
+                        }
+                        .action-btn {
                             padding: 8px;
                             border: none;
                             border-radius: 8px;
@@ -149,71 +158,56 @@
                             transform: translateY(-1px);
                             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
                         }
-                        .category-code-badge {
-                            background: #fff7c2;
-                            color: #fe8a8b;
-                            padding: 4px 8px;
-                            border-radius: 8px;
-                            font-size: 12px;
-                            font-weight: 600;
-                        }
-                    </style>                    <table class="admin-table">
+                    </style>
+
+                    <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>Category</th>
-                                <th>Description</th>
+                                <th>Country</th>
+                                <th>Code</th>
                                 <th>Videos</th>
                                 <th>Created</th>
                                 <th style="text-align: center;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($categories as $category)
+                            @forelse($countries as $country)
                                 <tr>
                                     <td>
                                         <div style="display: flex; align-items: center;">
-                                            <div class="category-avatar">
-                                                {{ strtoupper(substr($category->name, 0, 2)) }}
+                                            <div class="country-avatar">
+                                                {{ strtoupper(substr($country->name, 0, 2)) }}
                                             </div>
                                             <div>
-                                                <div style="font-weight: 600; color: #374151;">{{ $category->name }}</div>
+                                                <div style="font-weight: 600; color: #374151;">{{ $country->name }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span style="color: #6b7280;">{{ $category->description ?? 'No description' }}</span>
-                                    </td>                                    <td>
-                                        @if($category->videos_count > 0)
-                                            <a href="{{ route('admin.categories.show', $category) }}"
-                                               style="color: #3b82f6; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 4px;">
-                                                {{ $category->videos_count }} videos
-                                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                                </svg>
-                                            </a>
-                                        @else
-                                            <span style="color: #6b7280;">0 videos</span>
-                                        @endif
+                                        <span class="country-code-badge">{{ $country->code }}</span>
                                     </td>
                                     <td>
-                                        <span style="color: #6b7280;">{{ $category->created_at->format('M d, Y') }}</span>
+                                        <span style="color: #6b7280;">{{ $country->videos()->count() }} videos</span>
+                                    </td>
+                                    <td>
+                                        <span style="color: #6b7280;">{{ $country->created_at->format('M d, Y') }}</span>
                                     </td>
                                     <td style="text-align: center;">
-                                        <a href="{{ route('admin.categories.edit', $category) }}"
-                                           class="action-btn edit" title="Edit Category">
+                                        <a href="{{ route('admin.countries.edit', $country) }}"
+                                           class="action-btn edit" title="Edit Country">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                             </svg>
                                         </a>
-                                        <form action="{{ route('admin.categories.destroy', $category) }}"
+                                        <form action="{{ route('admin.countries.destroy', $country) }}"
                                               method="POST"
                                               style="display: inline;"
-                                              onsubmit="return confirm('Are you sure you want to delete this category? This action cannot be undone.')">
+                                              onsubmit="return confirm('Are you sure you want to delete this country? This action cannot be undone.')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
                                                     class="action-btn delete"
-                                                    title="Delete Category">
+                                                    title="Delete Country">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                 </svg>
@@ -224,12 +218,12 @@
                             @empty
                                 <tr>
                                     <td colspan="5" style="text-align: center; padding: 40px; color: #6b7280;">
-                                        <div style="font-size: 48px; margin-bottom: 16px;">📁</div>
-                                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">No Categories Found</h3>
-                                        <p style="margin-bottom: 16px;">Get started by creating your first category.</p>
-                                        <a href="{{ route('admin.categories.create') }}"
+                                        <div style="font-size: 48px; margin-bottom: 16px;">🌍</div>
+                                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">No Countries Found</h3>
+                                        <p style="margin-bottom: 16px;">Get started by creating your first country.</p>
+                                        <a href="{{ route('admin.countries.create') }}"
                                            style="background: linear-gradient(90deg, #fe8a8b 0%, #fff7c2 100%); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600;">
-                                            Add Category
+                                            Add Country
                                         </a>
                                     </td>
                                 </tr>
@@ -238,9 +232,9 @@
                     </table>
 
                     <!-- Pagination -->
-                    @if($categories->hasPages())
+                    @if($countries->hasPages())
                         <div style="margin-top: 24px;">
-                            {{ $categories->links() }}
+                            {{ $countries->links() }}
                         </div>
                     @endif
                 </div>
@@ -248,42 +242,45 @@
         </div>
     </div>
 
-    <!-- Category Modal -->
-    <div id="categoryModal" class="modal-overlay" onclick="closeCategoryModal()">
+    <!-- Country Modal -->
+    <div id="countryModal" class="modal-overlay" onclick="closeCountryModal()">
         <div class="modal-container" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h2 class="modal-title">Add New Category</h2>
-                <button onclick="closeCategoryModal()" class="modal-close">
+                <h2 class="modal-title">Add New Country</h2>
+                <button onclick="closeCountryModal()" class="modal-close">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="categoryForm" method="POST" action="{{ route('admin.categories.store') }}">
+                <form id="countryForm" method="POST" action="{{ route('admin.countries.store') }}">
                     @csrf
                     <div class="form-group">
-                        <label for="modal_name" class="form-label">Category Name *</label>
+                        <label for="modal_country_name" class="form-label">Country Name *</label>
                         <input type="text"
-                               id="modal_name"
+                               id="modal_country_name"
                                name="name"
                                class="form-input"
-                               placeholder="Enter category name"
+                               placeholder="Enter country name"
                                required>
                         <div class="error-message" id="name_error"></div>
                     </div>
                     <div class="form-group">
-                        <label for="modal_description" class="form-label">Description (Optional)</label>
-                        <textarea id="modal_description"
-                                  name="description"
-                                  class="form-input"
-                                  rows="3"
-                                  placeholder="Enter category description"></textarea>
-                        <div class="error-message" id="description_error"></div>
+                        <label for="modal_country_code" class="form-label">Country Code *</label>
+                        <input type="text"
+                               id="modal_country_code"
+                               name="code"
+                               class="form-input"
+                               placeholder="e.g., US, PH, CA"
+                               maxlength="3"
+                               style="text-transform: uppercase;"
+                               required>
+                        <div class="error-message" id="code_error"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" onclick="closeCategoryModal()" class="btn-secondary">Cancel</button>
-                        <button type="submit" class="btn-primary">Create Category</button>
+                        <button type="button" onclick="closeCountryModal()" class="btn-secondary">Cancel</button>
+                        <button type="submit" class="btn-primary">Create Country</button>
                     </div>
                 </form>
             </div>
@@ -459,19 +456,19 @@
     </style>
 
     <script>
-        function openCategoryModal() {
-            document.getElementById('categoryModal').classList.add('show');
+        function openCountryModal() {
+            document.getElementById('countryModal').classList.add('show');
             document.body.style.overflow = 'hidden';
             setTimeout(() => {
-                document.getElementById('modal_name').focus();
+                document.getElementById('modal_country_name').focus();
             }, 300);
         }
 
-        function closeCategoryModal() {
-            document.getElementById('categoryModal').classList.remove('show');
+        function closeCountryModal() {
+            document.getElementById('countryModal').classList.remove('show');
             document.body.style.overflow = 'auto';
             // Reset form
-            document.getElementById('categoryForm').reset();
+            document.getElementById('countryForm').reset();
             // Clear errors
             document.querySelectorAll('.error-message').forEach(el => {
                 el.style.display = 'none';
@@ -482,15 +479,20 @@
             });
         }
 
+        // Auto-uppercase country code
+        document.getElementById('modal_country_code').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
         // Close modal on Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeCategoryModal();
+                closeCountryModal();
             }
         });
 
         // Handle form submission
-        document.getElementById('categoryForm').addEventListener('submit', function(e) {
+        document.getElementById('countryForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             // Clear previous errors
@@ -516,14 +518,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    closeCategoryModal();
-                    // Reload page to show new category
+                    closeCountryModal();
+                    // Reload page to show new country
                     window.location.reload();
                 } else if (data.errors) {
                     // Show validation errors
                     Object.keys(data.errors).forEach(field => {
                         const errorEl = document.getElementById(field + '_error');
-                        const inputEl = document.getElementById('modal_' + field);
+                        const inputEl = document.getElementById('modal_country_' + field);
                         if (errorEl && inputEl) {
                             errorEl.textContent = data.errors[field][0];
                             errorEl.style.display = 'block';

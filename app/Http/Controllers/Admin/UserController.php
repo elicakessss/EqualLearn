@@ -8,10 +8,9 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
-{
-    public function index()
+{    public function index()
     {
-        $users = User::with('roles')->get();
+        $users = User::with('roles')->paginate(10);
         $roles = Role::all()->unique('name')->values(); // Ensure unique roles by name
         return view('admin.users.index', compact('users', 'roles'));
     }
@@ -23,11 +22,11 @@ class UserController extends Controller
         ]);
 
         $role = Role::find($request->role_id);
-        
+
         // Remove existing roles and assign new one
         $user->roles()->detach();
         $user->roles()->attach($role);
-        
+
         return redirect()->route('admin.users.index')
             ->with('success', "User role updated to {$role->name} successfully.");
     }

@@ -1,16 +1,280 @@
 <x-app-layout>
     <div class="py-12 text-center">
-        <div style="position: relative; margin-bottom: 50px;">
-            @if($selectedCategory)
-                <h1 style="font-family: 'Bubblegum Sans', 'Quicksand', sans-serif; font-size: 2.5rem; color: #fe8a8b; margin-bottom: 1.5rem;">{{ $selectedCategory->name }} Videos</h1>
-                <p style="font-size: 1.3rem; color: #8a95a9; margin-bottom: 2rem; font-weight: 500;">Discover amazing {{ strtolower($selectedCategory->name) }} content for kids</p>
-            @else
-                <h1 style="font-family: 'Bubblegum Sans', 'Quicksand', sans-serif; font-size: 2.5rem; color: #fe8a8b; margin-bottom: 1.5rem;">Educational Videos</h1>
-                <p style="font-size: 1.3rem; color: #8a95a9; margin-bottom: 2rem; font-weight: 500;">Discover amazing learning content for kids</p>
-            @endif
+        <div class="home-background" style="position: relative; margin-bottom: 24px;">
+            <div class="hero-header">
+                <div class="hero-text">
+                    @if($selectedCategory && $selectedCountry)
+                        <h1 class="hero-title">{{ $selectedCategory->name }} Videos from {{ $selectedCountry->name }}</h1>
+                        <p class="hero-subtitle">Discover amazing {{ strtolower($selectedCategory->name) }} content from {{ $selectedCountry->name }}</p>
+                    @elseif($selectedCategory)
+                        <h1 class="hero-title">{{ $selectedCategory->name }} Videos</h1>
+                        <p class="hero-subtitle">Discover amazing {{ strtolower($selectedCategory->name) }} content for kids</p>
+                    @elseif($selectedCountry)
+                        <h1 class="hero-title">Videos from {{ $selectedCountry->name }}</h1>
+                        <p class="hero-subtitle">Discover amazing educational content from {{ $selectedCountry->name }}</p>
+                    @else
+                        <h1 class="hero-title">Educational Videos</h1>
+                        <p class="hero-subtitle">Discover amazing learning content for kids</p>
+                    @endif
+                </div>
+
+                @auth
+                    @if(auth()->user()->role === 'creator')
+                        <div class="hero-action">
+                            <a href="{{ route('videos.create') }}" class="upload-btn">
+                                <span class="upload-icon">+</span>
+                                Upload Video
+                            </a>
+                        </div>
+                    @endif
+                @endauth
+            </div>
         </div>
-        
+
+        <!-- Filter Section -->
+        <div class="filter-section" style="margin-bottom: 30px;">
+            <form method="GET" action="{{ route('home') }}" class="filter-form">
+                <div class="filter-row">
+                    <select name="category" onchange="this.form.submit()" class="filter-dropdown">
+                        <option value="">All Categories</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ request()->query('category') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <select name="country" onchange="this.form.submit()" class="filter-dropdown">
+                        <option value="">All Countries</option>
+                        @foreach($countries as $country)
+                            <option value="{{ $country->id }}" {{ request()->query('country') == $country->id ? 'selected' : '' }}>
+                                {{ $country->name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    @if(request()->query('category') || request()->query('country'))
+                        <a href="{{ route('home') }}" class="clear-filters-btn">
+                            Clear Filters
+                        </a>
+                    @endif
+                </div>
+
+                <!-- Preserve search if exists -->
+                @if(request()->query('search'))
+                    <input type="hidden" name="search" value="{{ request()->query('search') }}">
+                @endif
+            </form>
+        </div>
+
         <style>
+            .home-background {
+                background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 25%, #ffd3a5 50%, #fd9853 75%, #ff6b9d 100%);
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                border-radius: 20px;
+                padding: 50px 40px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .home-background::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, rgba(168, 230, 207, 0.05) 0%, rgba(220, 237, 193, 0.05) 25%, rgba(255, 211, 165, 0.05) 50%, rgba(253, 152, 83, 0.05) 75%, rgba(255, 107, 157, 0.05) 100%);
+                z-index: 1;
+            }
+
+            .home-background > * {
+                position: relative;
+                z-index: 2;
+            }
+
+            .hero-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+
+            .hero-text {
+                flex: 1;
+                text-align: left;
+            }
+
+            .hero-action {
+                flex-shrink: 0;
+            }
+
+            .upload-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: linear-gradient(135deg, #ff6b9d 0%, #ffc3a0 100%);
+                color: white;
+                text-decoration: none;
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-weight: 600;
+                font-size: 1rem;
+                box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+                transition: all 0.3s ease;
+                border: none;
+                cursor: pointer;
+            }
+
+            .upload-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4);
+                text-decoration: none;
+                color: white;
+            }
+
+            .upload-icon {
+                background: rgba(255, 255, 255, 0.2);
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            /* Filter Section Styles */
+            .filter-section {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+
+            .filter-form {
+                background: white;
+                border-radius: 16px;
+                padding: 20px;
+                box-shadow: 0 4px 20px rgba(254, 138, 139, 0.08);
+                border: 1.5px solid #f6e6e6;
+            }
+
+            .filter-row {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+
+            .filter-dropdown {
+                padding: 8px 12px;
+                border: 2px solid #ffe6e6;
+                border-radius: 12px;
+                background: #fff7c2;
+                color: #fe8a8b;
+                font-weight: 600;
+                font-size: 14px;
+                font-family: 'Nunito', 'Quicksand', sans-serif;
+                min-width: 120px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .filter-dropdown:focus {
+                outline: none;
+                border-color: #fe8a8b;
+                box-shadow: 0 0 0 3px rgba(254, 138, 139, 0.1);
+            }
+
+            .filter-dropdown:hover {
+                background: #ffd5de;
+            }
+
+            .clear-filters-btn {
+                padding: 12px 20px;
+                background: linear-gradient(135deg, #ff6b9d 0%, #ffc3a0 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 12px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 10px rgba(255, 107, 157, 0.2);
+            }
+
+            .clear-filters-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+                text-decoration: none;
+                color: white;
+            }
+
+            @media (max-width: 768px) {
+                .filter-row {
+                    flex-direction: column;
+                    gap: 12px;
+                }
+
+                .filter-dropdown {
+                    width: 100%;
+                    min-width: auto;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .hero-header {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .hero-text {
+                    text-align: center;
+                }
+
+                .upload-btn {
+                    font-size: 0.9rem;
+                    padding: 10px 20px;
+                }
+            }
+
+            .hero-title {
+                font-family: 'Quicksand', sans-serif;
+                font-size: 2.2rem;
+                font-weight: 700;
+                color: #ffffff;
+                margin-bottom: 0.3rem;
+                text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                letter-spacing: -0.02em;
+                line-height: 1.2;
+            }
+
+            .hero-subtitle {
+                font-family: 'Quicksand', sans-serif;
+                font-size: 1rem;
+                font-weight: 500;
+                color: #ffffff;
+                margin-bottom: 0;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+                opacity: 0.95;
+                letter-spacing: 0.01em;
+                line-height: 1.4;
+            }
+
+            @media (max-width: 768px) {
+                .hero-title {
+                    font-size: 2rem;
+                }
+                .hero-subtitle {
+                    font-size: 1rem;
+                }
+                .home-background {
+                    padding: 40px 30px;
+                }
+            }
             .video-grid {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
@@ -19,31 +283,28 @@
                 margin: 0 auto;
                 padding: 0 20px;
             }
-            
-            /* For tablets and smaller screens */
+
+            /* Responsive design for smaller screens */
             @media (max-width: 1024px) {
                 .video-grid {
                     grid-template-columns: repeat(3, 1fr);
                     gap: 16px;
                 }
             }
-            
-            /* For mobile screens */
+
             @media (max-width: 768px) {
                 .video-grid {
                     grid-template-columns: repeat(2, 1fr);
                     gap: 12px;
                 }
             }
-            
-            /* For very small screens */
+
             @media (max-width: 480px) {
                 .video-grid {
                     grid-template-columns: 1fr;
                     gap: 16px;
                 }
             }
-            
             .video-card {
                 background: linear-gradient(135deg, #fff7c2 0%, #ffd5de 100%);
                 border-radius: 20px;
@@ -124,6 +385,8 @@
                         <div class="video-meta">
                             <span>{{ $video->user->name }}</span>
                             <span>•</span>
+                            <span>{{ $video->country->name }}</span>
+                            <span>•</span>
                             <span>{{ number_format($video->views) }} views</span>
                             <span>•</span>
                             <span>{{ $video->created_at->diffForHumans() }}</span>
@@ -138,8 +401,12 @@
                 </div>
                 <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 10px; color: #55565a;">No videos found</h3>
                 <p style="color: #8a95a9; font-size: 1.1rem;">
-                    @if($selectedCategory)
+                    @if($selectedCategory && $selectedCountry)
+                        No {{ strtolower($selectedCategory->name) }} videos from {{ $selectedCountry->name }} yet.
+                    @elseif($selectedCategory)
                         No videos in this category yet.
+                    @elseif($selectedCountry)
+                        No videos from {{ $selectedCountry->name }} yet.
                     @else
                         No videos available yet. Check back soon!
                     @endif

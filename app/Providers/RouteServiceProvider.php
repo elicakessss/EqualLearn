@@ -21,10 +21,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         $user = auth()->user();
         if ($user) {
-            if ($user->hasRole('admin')) {
-                return '/admin/dashboard';
-            }
-            // All other roles go to home
+            // All authenticated users go to home page
             return '/home';
         }
         return static::HOME;

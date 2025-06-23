@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('thumbnail')->nullable();
             $table->string('video_url');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('country_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Creator of the video
             $table->integer('views')->default(0);
             $table->boolean('is_approved')->default(false);

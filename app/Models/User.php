@@ -57,6 +57,32 @@ class User extends Authenticatable
         return $this->hasMany(Video::class);
     }
 
+    public function videoLikes(): HasMany
+    {
+        return $this->hasMany(VideoLike::class);
+    }
+
+    public function likedVideos(): BelongsToMany
+    {
+        try {
+            return $this->belongsToMany(Video::class, 'video_likes')->withTimestamps();
+        } catch (\Exception $e) {
+            // Return empty collection if table doesn't exist
+            return $this->belongsToMany(Video::class, 'video_likes')->whereRaw('1 = 0');
+        }
+    }
+
+    public function hasLikedVideo(Video $video): bool
+    {
+        // Check if video_likes table exists before querying
+        try {
+            return $this->likedVideos()->where('video_id', $video->id)->exists();
+        } catch (\Exception $e) {
+            // If table doesn't exist, return false
+            return false;
+        }
+    }
+
     public function hasRole(string $role): bool
     {
         return $this->roles->contains('name', $role);

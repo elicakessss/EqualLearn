@@ -2,9 +2,18 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h1 class="text-2xl font-bold mb-6" style="color: #fe8a8b; font-family: 'Quicksand', sans-serif;">System Logs</h1>
+                <div class="p-6 text-gray-900">                    <h1 class="text-2xl font-bold mb-6" style="color: #fe8a8b; font-family: 'Quicksand', sans-serif;">System Logs</h1>
                     <p class="text-gray-600 mb-4">Track all actions performed in the system</p>
+
+                    @if(isset($error))
+                        <div style="background: #fff5f5; color: #fe8a8b; border: 1px solid #ffdede; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                            <h3 style="font-weight: 600; margin-bottom: 10px;">⚠️ System Logs Table Missing</h3>
+                            <p style="margin-bottom: 15px;">{{ $error }}</p>
+                            <a href="{{ $createUrl }}" style="background: #fe8a8b; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                                Create System Logs Table
+                            </a>
+                        </div>
+                    @endif
 
                     <style>
                         .pretty-table {
@@ -52,8 +61,7 @@
                         .action-category_created { background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); }
                         .action-video_uploaded { background: linear-gradient(135deg, #fd63a6 0%, #e84393 100%); }
                         .action-default { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); }
-                    </style>
-
+                    </style>                    @if(!isset($error))
                     <div class="overflow-x-auto">
                         <table class="pretty-table">
                             <thead>
@@ -105,6 +113,7 @@
                     <div class="mt-4">
                         {{ $logs->links() }}
                     </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('code', 2); // Two-letter country code (PH for Philippines, BR for Brazil)
+            $table->string('code', 10); // Country code (PH for Philippines, BR for Brazil, etc.)
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }

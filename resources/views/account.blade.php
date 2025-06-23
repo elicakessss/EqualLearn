@@ -1,161 +1,672 @@
 <x-app-layout>
-    <div class="py-12 text-center">
-        <div style="position: relative; margin-bottom: 50px;">
-            <h1 style="font-family: 'Bubblegum Sans', 'Quicksand', sans-serif; font-size: 2.5rem; color: #fe8a8b; margin-bottom: 1.5rem;">My Account</h1>
-            <p style="font-size: 1.3rem; color: #8a95a9; margin-bottom: 2rem; font-weight: 500;">
-                {{ auth()->user()->hasRole('creator') ? 'Manage your educational content' : 'Your learning profile' }}
-            </p>
-        </div>
-
-        <style>
-            .account-card {
-                background: linear-gradient(135deg, #fff7c2 0%, #ffd5de 100%);
-                border-radius: 28px;
-                box-shadow: 0 8px 32px 0 rgba(254, 138, 139, 0.08), 0 1.5px 8px 0 rgba(208, 230, 250, 0.10);
-                border: 1.5px solid #f6e6e6;
-                padding: 32px;
-                margin: 0 auto 32px auto;
-                max-width: 800px;
-                text-align: left;
-            }
-            .video-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-                gap: 32px;
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-            .video-card {
-                background: linear-gradient(135deg, #e8f4fd 0%, #f5e8ff 100%);
-                border-radius: 28px;
-                box-shadow: 0 8px 32px 0 rgba(254, 138, 139, 0.08), 0 1.5px 8px 0 rgba(208, 230, 250, 0.10);
-                overflow: hidden;
-                border: 1.5px solid #f6e6e6;
-                transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s;
-            }
-            .video-card:hover {
-                transform: translateY(-8px) scale(1.03);
-                box-shadow: 0 16px 40px 0 rgba(254, 138, 139, 0.16), 0 2px 12px 0 rgba(208, 230, 250, 0.13);
-            }
-            .video-thumbnail {
-                width: 100%;
-                aspect-ratio: 16/9;
-                background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #fff;
-                font-size: 2rem;
-                font-weight: bold;
-            }
-            .video-info {
-                padding: 20px;
-            }
-            .video-title {
-                font-family: 'Quicksand', sans-serif;
-                font-size: 1.1rem;
-                font-weight: 700;
-                color: #fe8a8b;
-                margin-bottom: 10px;
-            }
-            .upload-btn {
-                background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
-                border: none;
-                border-radius: 18px;
-                color: white;
-                padding: 15px 32px;
-                font-size: 1.1rem;
-                font-weight: 600;
-                font-family: 'Quicksand', sans-serif;
-                text-decoration: none;
-                display: inline-block;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 15px 0 rgba(255, 118, 117, 0.25);
-            }
-            .upload-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px 0 rgba(255, 118, 117, 0.4);
-                color: white;
-                text-decoration: none;
-            }
-            .status-badge {
-                padding: 6px 14px;
-                border-radius: 20px;
-                font-size: 0.85rem;
-                font-weight: 600;
-                color: white;
-            }
-            .status-approved {
-                background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-            }
-            .status-pending {
-                background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
-            }
-        </style>
-
-        @if(auth()->user()->hasRole('creator'))
-            <div class="account-card">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 style="font-family: 'Quicksand', sans-serif; font-size: 1.8rem; font-weight: 700; color: #fe8a8b; margin: 0;">My Videos</h2>
-                    <a href="{{ route('videos.create') }}" class="upload-btn">
-                        🎥 Upload New Video
+    <div class="dashboard-container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        @if(auth()->user()->hasRole('admin'))
+                            👑
+                        @elseif(auth()->user()->hasRole('creator'))
+                            🎬
+                        @else
+                            👨‍🎓
+                        @endif
+                    </div>
+                    <div class="user-details">
+                        <h1 class="welcome-title">Welcome back, {{ auth()->user()->name }}!</h1>
+                        <p class="user-role">
+                            @if(auth()->user()->hasRole('admin'))
+                                Administrator Dashboard
+                            @elseif(auth()->user()->hasRole('creator'))
+                                Content Creator Dashboard
+                            @else
+                                Student Dashboard
+                            @endif
+                        </p>
+                    </div>
+                </div>
+                <div class="user-actions">
+                    <a href="{{ route('profile.show') }}" class="action-btn primary">
+                        <i class="fas fa-user-edit"></i>
+                        Edit Profile
                     </a>
                 </div>
-                
-                @if(auth()->user()->videos->count() > 0)
-                    <div class="video-grid">
-                        @foreach(auth()->user()->videos as $video)
-                            <div class="video-card">
-                                <div class="video-thumbnail">
-                                    🎬
-                                </div>
-                                <div class="video-info">
-                                    <h3 class="video-title">{{ $video->title }}</h3>
-                                    <div class="flex justify-between items-center mt-3">
-                                        <span style="color: #8a95a9; font-weight: 500;">👀 {{ $video->views }} views</span>
-                                        <span class="status-badge {{ $video->is_approved ? 'status-approved' : 'status-pending' }}">
-                                            {{ $video->is_approved ? '✅ Approved' : '⏳ Pending' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div style="text-align: center; padding: 40px 20px; color: #8a95a9;">
-                        <div style="font-size: 4rem; margin-bottom: 20px;">🎬</div>
-                        <h3 style="font-family: 'Quicksand', sans-serif; font-size: 1.5rem; font-weight: 600; color: #fe8a8b; margin-bottom: 10px;">No videos yet</h3>
-                        <p style="font-size: 1.1rem; margin-bottom: 25px;">Start creating amazing educational content for kids!</p>
-                        <a href="{{ route('videos.create') }}" class="upload-btn">
-                            🚀 Create Your First Video
-                        </a>
-                    </div>
-                @endif
             </div>
-        @else
-            <div class="account-card">
-                <div style="text-align: center; padding: 20px;">
-                    <div style="font-size: 4rem; margin-bottom: 20px;">👨‍🎓</div>
-                    <h2 style="font-family: 'Quicksand', sans-serif; font-size: 1.8rem; font-weight: 700; color: #fe8a8b; margin-bottom: 15px;">Welcome, {{ auth()->user()->name }}!</h2>
-                    <p style="font-size: 1.2rem; color: #8a95a9; margin-bottom: 25px;">Keep exploring and learning amazing things!</p>
-                    
-                    <div style="background: rgba(255, 255, 255, 0.6); border-radius: 18px; padding: 25px; margin-top: 30px;">
-                        <h3 style="font-family: 'Quicksand', sans-serif; font-size: 1.3rem; font-weight: 600; color: #fe8a8b; margin-bottom: 15px;">📊 Your Learning Stats</h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center;">
-                            <div>
-                                <div style="font-size: 2rem; font-weight: bold; color: #00b894;">🎯</div>
-                                <p style="color: #8a95a9; margin: 5px 0;">Videos Watched</p>
-                                <p style="font-size: 1.5rem; font-weight: bold; color: #fe8a8b;">Coming Soon</p>
-                            </div>
-                            <div>
-                                <div style="font-size: 2rem; font-weight: bold; color: #fd79a8;">⭐</div>
-                                <p style="color: #8a95a9; margin: 5px 0;">Achievements</p>
-                                <p style="font-size: 1.5rem; font-weight: bold; color: #fe8a8b;">Coming Soon</p>
-                            </div>
-                        </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            @if(auth()->user()->hasRole('admin'))
+                <div class="stat-card">
+                    <div class="stat-icon admin">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ \App\Models\User::count() }}</h3>
+                        <p>Total Users</p>
                     </div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-icon video">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ \App\Models\Video::count() }}</h3>
+                        <p>Total Videos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon category">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ \App\Models\Category::count() }}</h3>
+                        <p>Categories</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon country">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ \App\Models\Country::count() }}</h3>
+                        <p>Countries</p>
+                    </div>
+                </div>
+            @elseif(auth()->user()->hasRole('creator'))
+                <div class="stat-card">
+                    <div class="stat-icon video">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ auth()->user()->videos()->count() }}</h3>
+                        <p>My Videos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon views">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ auth()->user()->videos()->sum('views') ?? 0 }}</h3>
+                        <p>Total Views</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon likes">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ auth()->user()->videos()->withCount('likes')->get()->sum('likes_count') ?? 0 }}</h3>
+                        <p>Total Likes</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ auth()->user()->videos()->where('is_approved', false)->count() }}</h3>
+                        <p>Pending Approval</p>
+                    </div>
+                </div>
+            @else
+                <div class="stat-card">
+                    <div class="stat-icon likes">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ auth()->user()->likedVideos()->count() }}</h3>
+                        <p>Liked Videos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon video">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ \App\Models\Video::where('is_approved', true)->count() }}</h3>
+                        <p>Available Videos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon category">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ \App\Models\Category::count() }}</h3>
+                        <p>Categories</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon time">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ auth()->user()->created_at->format('M Y') }}</h3>
+                        <p>Member Since</p>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions-section">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="actions-grid">
+                @if(auth()->user()->hasRole('admin'))
+                    <a href="{{ route('admin.categories.index') }}" class="action-card">
+                        <div class="action-icon categories">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <h3>Manage Categories</h3>
+                        <p>Add, edit, or remove video categories</p>
+                    </a>
+                    <a href="{{ route('admin.countries.index') }}" class="action-card">
+                        <div class="action-icon countries">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>Manage Countries</h3>
+                        <p>Add, edit, or remove countries</p>
+                    </a>
+                    <a href="{{ route('admin.videos.index') }}" class="action-card">
+                        <div class="action-icon videos">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3>Manage Videos</h3>
+                        <p>Review and approve user videos</p>
+                    </a>
+                    <a href="{{ route('admin.users.index') }}" class="action-card">
+                        <div class="action-icon users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Manage Users</h3>
+                        <p>View and manage user accounts</p>
+                    </a>
+                    <a href="{{ route('admin.logs.index') }}" class="action-card">
+                        <div class="action-icon logs">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h3>System Logs</h3>
+                        <p>View system activity logs</p>
+                    </a>
+                @elseif(auth()->user()->hasRole('creator'))
+                    <a href="{{ route('videos.create') }}" class="action-card">
+                        <div class="action-icon upload">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <h3>Upload Video</h3>
+                        <p>Share new educational content</p>
+                    </a>
+                @endif
+                    <a href="{{ route('home') }}" class="action-card">
+                        <div class="action-icon home">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h3>Browse Videos</h3>
+                        <p>Explore educational content</p>
+                    </a>
+                    <a href="{{ route('profile.show') }}" class="action-card">
+                        <div class="action-icon profile">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <h3>Edit Profile</h3>
+                        <p>Update your account information</p>
+                    </a>
             </div>
-        @endif
+        </div>
+
+        <!-- Recent Content -->
+        <div class="recent-content-section">
+            <h2 class="section-title">
+                @if(auth()->user()->hasRole('creator'))
+                    My Recent Videos
+                @elseif(auth()->user()->hasRole('admin'))
+                    Recent Videos (Pending Approval)
+                @else
+                    Recently Liked Videos
+                @endif
+            </h2>
+            <div class="content-grid">
+                @if(auth()->user()->hasRole('creator'))
+                    @forelse(auth()->user()->videos()->latest()->take(4)->get() as $video)
+                        <div class="content-card">
+                            <div class="content-thumbnail">
+                                @if($video->thumbnail_path)
+                                    <img src="{{ Storage::url($video->thumbnail_path) }}" alt="{{ $video->title }}">
+                                @else
+                                    <div class="placeholder-thumbnail">
+                                        <i class="fas fa-video"></i>
+                                    </div>
+                                @endif
+                                <div class="video-status {{ $video->is_approved ? 'approved' : 'pending' }}">
+                                    {{ $video->is_approved ? 'Approved' : 'Pending' }}
+                                </div>
+                            </div>
+                            <div class="content-info">
+                                <h4>{{ Str::limit($video->title, 40) }}</h4>
+                                <p>{{ $video->views ?? 0 }} views • {{ $video->created_at->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="empty-state">
+                            <i class="fas fa-video"></i>
+                            <p>No videos uploaded yet</p>
+                            <a href="{{ route('videos.create') }}" class="btn-primary">Upload Your First Video</a>
+                        </div>
+                    @endforelse
+                @elseif(auth()->user()->hasRole('admin'))
+                    @forelse(\App\Models\Video::where('is_approved', false)->latest()->take(4)->get() as $video)
+                        <div class="content-card">
+                            <div class="content-thumbnail">
+                                @if($video->thumbnail_path)
+                                    <img src="{{ Storage::url($video->thumbnail_path) }}" alt="{{ $video->title }}">
+                                @else
+                                    <div class="placeholder-thumbnail">
+                                        <i class="fas fa-video"></i>
+                                    </div>
+                                @endif
+                                <div class="video-status pending">Pending Review</div>
+                            </div>
+                            <div class="content-info">
+                                <h4>{{ Str::limit($video->title, 40) }}</h4>
+                                <p>By {{ $video->user->name }} • {{ $video->created_at->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <p>No videos pending approval</p>
+                        </div>
+                    @endforelse
+                @else
+                    @forelse(auth()->user()->likedVideos()->latest('video_likes.created_at')->take(4)->get() as $video)
+                        <a href="{{ route('videos.show', $video->slug) }}" class="content-card">
+                            <div class="content-thumbnail">
+                                @if($video->thumbnail_path)
+                                    <img src="{{ Storage::url($video->thumbnail_path) }}" alt="{{ $video->title }}">
+                                @else
+                                    <div class="placeholder-thumbnail">
+                                        <i class="fas fa-video"></i>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="content-info">
+                                <h4>{{ Str::limit($video->title, 40) }}</h4>
+                                <p>{{ $video->views ?? 0 }} views • {{ $video->created_at->diffForHumans() }}</p>
+                            </div>
+                        </a>
+                    @empty
+                        <div class="empty-state">
+                            <i class="fas fa-heart"></i>
+                            <p>No liked videos yet</p>
+                            <a href="{{ route('home') }}" class="btn-primary">Explore Videos</a>
+                        </div>
+                    @endforelse
+                @endif
+            </div>
+        </div>
     </div>
+
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, #fe8a8b 0%, #fff7c2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(254, 138, 139, 0.15);
+        }
+
+        .welcome-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .welcome-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin: 0 0 4px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-role {
+            font-family: 'Nunito', sans-serif;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .user-actions .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .user-actions .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(227, 231, 240, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(254, 138, 139, 0.12);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .stat-icon.admin { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-icon.video { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-icon.category { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .stat-icon.country { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .stat-icon.views { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .stat-icon.likes { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .stat-icon.pending { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+        .stat-icon.time { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+
+        .stat-info h3 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #55565a;
+            margin: 0;
+        }
+
+        .stat-info p {
+            color: #8a95a9;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Sections */
+        .section-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #55565a;
+            margin: 0 0 20px 0;
+        }
+
+        .quick-actions-section {
+            margin-bottom: 40px;
+        }
+
+        /* Actions Grid */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(227, 231, 240, 0.8);
+            display: block;
+        }
+
+        .action-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(254, 138, 139, 0.15);
+            text-decoration: none;
+        }
+
+        .action-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .action-icon.categories { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .action-icon.countries { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .action-icon.videos { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .action-icon.users { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .action-icon.logs { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+        .action-icon.upload { background: linear-gradient(135deg, #a8e6cf 0%, #88d8c0 100%); }
+        .action-icon.home { background: linear-gradient(135deg, #ffa726 0%, #ff7043 100%); }
+        .action-icon.profile { background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%); }
+
+        .action-card h3 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #55565a;
+            margin: 0 0 8px 0;
+        }
+
+        .action-card p {
+            color: #8a95a9;
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(227, 231, 240, 0.8);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .content-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(254, 138, 139, 0.12);
+            text-decoration: none;
+        }
+
+        .content-thumbnail {
+            width: 100%;
+            height: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .placeholder-thumbnail {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f8f9fc 0%, #e3e7f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8a95a9;
+            font-size: 24px;
+        }
+
+        .video-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .video-status.approved {
+            background: #effbf7;
+            color: #0cc396;
+        }
+
+        .video-status.pending {
+            background: #fff5f5;
+            color: #fe8a8b;
+        }
+
+        .content-info {
+            padding: 16px;
+        }
+
+        .content-info h4 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #55565a;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .content-info p {
+            color: #8a95a9;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: #8a95a9;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Buttons */
+        .action-btn, .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn.primary, .btn-primary {
+            background: linear-gradient(135deg, #fe8a8b 0%, #ff7b7c 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(254, 138, 139, 0.25);
+        }
+
+        .action-btn.primary:hover, .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(254, 138, 139, 0.35);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 0 16px;
+            }
+
+            .welcome-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 16px;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .content-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 16px;
+            }
+        }
+    </style>
 </x-app-layout>
