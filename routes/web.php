@@ -4,53 +4,63 @@ use App\Http\Controllers\VideoController;
 use App\Http\Controllers\Admin\VideoManagementController;
 use Illuminate\Support\Facades\Route;
 
-// Public routes
+// Public routes (only for non-authenticated users)
 Route::get('/', function(\Illuminate\Http\Request $request) {
-    // End any existing session when visiting the welcome/login page
+    // If user is already authenticated, redirect to home
     if (\Illuminate\Support\Facades\Auth::check()) {
-        \Illuminate\Support\Facades\Auth::guard('web')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        // Quietly redirect without notification
-        return redirect()->route('welcome');
+        return redirect()->route('home');
     }
     return view('welcome');
 })->name('welcome');
 
-Route::get('/home', function(\Illuminate\Http\Request $request) {
-    $categories = \App\Models\Category::all();
-    $countries = \App\Models\Country::orderBy('name')->get();
-    $videos = \App\Models\Video::with(['category', 'country', 'user'])
-        ->where('is_approved', true)
-        ->when($request->query('category'), function($query, $categoryId) {
-            return $query->where('category_id', $categoryId);
-        })
-        ->when($request->query('country'), function($query, $countryId) {
-            return $query->where('country_id', $countryId);
-        })
-        ->when($request->query('search'), function($query, $search) {
-            return $query->where('title', 'like', '%' . $search . '%');
-        })
-        ->latest()
-        ->paginate(12);
-
-    $selectedCategory = $request->query('category') ? \App\Models\Category::find($request->query('category')) : null;
-    $selectedCountry = $request->query('country') ? \App\Models\Country::find($request->query('country')) : null;
-
-    return view('home', compact('categories', 'countries', 'videos', 'selectedCategory', 'selectedCountry'));
-})->name('home');
-
-// Redirect /videos to home since home now shows all videos
-Route::get('/videos', function() {
-    return redirect()->route('home');
-});
+// Support page - accessible to everyone
+Route::get('/support', function() {
+    return view('support');
+})->name('support');
 
 // Authentication routes (provided by Laravel Breeze or similar)
 require __DIR__.'/auth.php';
 
-// Authenticated user routes
+// All application routes require authentication
 Route::middleware(['auth'])->group(function () {
+    
+    // Home page - protected by auth
+    Route::get('/home', function(\Illuminate\Http\Request $request) {
+        $categories = \App\Models\Category::all();
+        $countries = \App\Models\Country::orderBy('name')->get();
+        $videos = \App\Models\Video::with(['category', 'country', 'user'])
+            ->where('is_approved', true)
+            ->when($request->query('category'), function($query, $categoryId) {
+                return $query->where('category_id', $categoryId);
+            })
+            ->when($request->query('country'), function($query, $countryId) {
+                return $query->where('country_id', $countryId);
+            })
+            ->when($request->query('search'), function($query, $search) {
+                return $query->where('title', 'like', '%' . $search . '%');
+            })
+            ->latest()
+            ->paginate(12);
+
+        $selectedCategory = $request->query('category') ? \App\Models\Category::find($request->query('category')) : null;
+        $selectedCountry = $request->query('country') ? \App\Models\Country::find($request->query('country')) : null;
+
+        return view('home', compact('categories', 'countries', 'videos', 'selectedCategory', 'selectedCountry'));
+    })->name('home');
+
+    // Creator-only video upload routes - MUST come BEFORE /videos/{video:slug}
+    Route::middleware(['role:creator'])->group(function () {
+        Route::get('/videos/create', [VideoController::class, 'create'])->name('videos.create');
+        Route::post('/videos', [VideoController::class, 'store'])->name('videos.store');
+    });
+
+    // Redirect /videos to home since home now shows all videos
+    Route::get('/videos', function() {
+        return redirect()->route('home');
+    });
+
+    // Video show route - protected by auth
+    Route::get('/videos/{video:slug}', [VideoController::class, 'show'])->name('videos.show');
     // All users: redirect /dashboard to /home
     Route::get('/dashboard', function () {
         return redirect('/home');
@@ -82,12 +92,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Test with just auth middleware
     Route::get('/test/videos/create', [VideoController::class, 'create'])->middleware('auth')->name('test.videos.create');
-
-    // Creator-only video upload routes - MUST come BEFORE /videos/{video:slug}
-    Route::middleware(['role:creator'])->group(function () {
-        Route::get('/videos/create', [VideoController::class, 'create'])->name('videos.create');
-        Route::post('/videos', [VideoController::class, 'store'])->name('videos.store');
-    });
 
     // Admin-only management routes
     Route::middleware(['role:admin'])->group(function () {
@@ -131,10 +135,7 @@ Route::middleware(['auth'])->group(function () {
                 'destroy' => 'admin.countries.destroy'
             ]);
     });
-});
-
-// Video edit routes - MUST come BEFORE /videos/{video:slug} to avoid conflicts
-Route::middleware(['auth'])->group(function () {
+    // Video edit routes - MUST come BEFORE /videos/{video:slug} to avoid conflicts
     Route::get('/videos/{video:slug}/edit', [VideoController::class, 'edit'])->name('videos.edit');
     Route::put('/videos/{video:slug}', [VideoController::class, 'update'])->name('videos.update');
 
@@ -168,7 +169,5 @@ Route::middleware(['auth'])->group(function () {
             return 'Error creating table: ' . $e->getMessage();
         }
     });
-});
 
-// Video show route - MUST come AFTER /videos/create and /videos/edit to avoid conflicts
-Route::get('/videos/{video:slug}', [VideoController::class, 'show'])->name('videos.show');
+}); // End of auth middleware group
