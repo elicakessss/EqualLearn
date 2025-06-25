@@ -9,6 +9,12 @@
     <meta http-equiv="Expires" content="0" />
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Bubblegum+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -320,8 +326,11 @@
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">⭐</div>
-                        <div class="feature-title">Quality Content</div>
-                        <div class="feature-text">Access premium educational materials<br><span style="color: #ff6b9d; font-weight: 600; font-size: 0.8rem;">Coming Soon!</span></div>
+                        <div class="feature-title">Premium Content</div>
+                        <div class="feature-text">Access premium educational materials</div>
+                        <div style="background: linear-gradient(45deg, #ff6b6b, #feca57); color: white; padding: 6px 12px; border-radius: 15px; font-size: 0.75rem; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.2); box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3); animation: pulse 2s infinite; margin-top: 8px; display: inline-block;">
+                            🚀 Coming Soon!
+                        </div>
                     </div>
                 </div>
             </div>
