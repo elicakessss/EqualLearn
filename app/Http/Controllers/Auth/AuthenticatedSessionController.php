@@ -24,9 +24,9 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('login');
         }
 
-        // Keep the role parameter if provided
+        // Keep the role parameter if provided and redirect to welcome
         $role = $request->query('role');
-        return view('auth.login', ['role' => $role]);
+        return redirect()->route('welcome')->with('role', $role);
     }
 
     public function store(LoginRequest $request): RedirectResponse

@@ -1,75 +1,160 @@
 <x-app-layout>
-    <div class="flex h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <div class="flex-1 overflow-auto">
-            <div class="p-8">
-                <!-- Header -->
-                <div class="mb-8">
-                    <div class="flex items-center mb-4">
-                        <a href="{{ route('admin.categories.index') }}"
-                           class="mr-4 p-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                            </svg>
-                        </a>
-                        <div>
-                            <h1 class="text-3xl font-bold bg-gradient-to-r from-pink-400 to-yellow-300 bg-clip-text text-transparent">
+    <div class="py-12">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <!-- Header -->
+                    <div class="mb-6">
+                        <div class="flex items-center mb-4">
+                            <a href="{{ route('admin.categories.index') }}"
+                               class="mr-4 p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                            </a>
+                            <h1 class="text-2xl font-bold" style="color: #fe8a8b; font-family: 'Quicksand', sans-serif;">
                                 Edit Category
                             </h1>
-                            <p class="text-gray-600 mt-2">Update category information</p>
                         </div>
+                        <p class="text-gray-600 mt-2">Update category information</p>
                     </div>
-                </div>
 
-                <!-- Form Card -->
-                <div class="max-w-2xl">
-                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-pink-100">
-                        <div class="bg-gradient-to-r from-pink-400 to-yellow-300 px-6 py-4">
-                            <h2 class="text-xl font-semibold text-white">Category Details</h2>
+                    <!-- Form -->
+                    <style>
+                        .form-group {
+                            margin-bottom: 24px;
+                        }
+                        .form-label {
+                            display: block;
+                            margin-bottom: 8px;
+                            font-weight: 600;
+                            color: #374151;
+                        }
+                        .form-input {
+                            width: 100%;
+                            padding: 12px 16px;
+                            border: 2px solid #e5e7eb;
+                            border-radius: 12px;
+                            font-size: 16px;
+                            transition: border-color 0.2s;
+                        }
+                        .form-input:focus {
+                            outline: none;
+                            border-color: #fe8a8b;
+                            box-shadow: 0 0 0 3px rgba(254, 138, 139, 0.1);
+                        }
+                        .form-input.error {
+                            border-color: #ef4444;
+                        }
+                        .form-textarea {
+                            width: 100%;
+                            padding: 12px 16px;
+                            border: 2px solid #e5e7eb;
+                            border-radius: 12px;
+                            font-size: 16px;
+                            transition: border-color 0.2s;
+                            resize: vertical;
+                        }
+                        .form-textarea:focus {
+                            outline: none;
+                            border-color: #fe8a8b;
+                            box-shadow: 0 0 0 3px rgba(254, 138, 139, 0.1);
+                        }
+                        .form-textarea.error {
+                            border-color: #ef4444;
+                        }
+                        .error-text {
+                            margin-top: 8px;
+                            color: #ef4444;
+                            font-size: 14px;
+                        }
+                        .btn {
+                            padding: 12px 24px;
+                            border-radius: 12px;
+                            font-weight: 600;
+                            text-decoration: none;
+                            transition: all 0.2s;
+                            cursor: pointer;
+                            border: none;
+                            font-size: 16px;
+                        }
+                        .btn-primary {
+                            background: linear-gradient(90deg, #fe8a8b 0%, #fff7c2 100%);
+                            color: white;
+                        }
+                        .btn-primary:hover {
+                            transform: translateY(-1px);
+                            box-shadow: 0 4px 8px rgba(254, 138, 139, 0.3);
+                        }
+                        .btn-secondary {
+                            background: #f3f4f6;
+                            color: #374151;
+                        }
+                        .btn-secondary:hover {
+                            background: #e5e7eb;
+                        }
+                        .stats-box {
+                            background: #fff7c2;
+                            border: 1px solid #ffd5de;
+                            border-radius: 12px;
+                            padding: 16px;
+                            margin-bottom: 24px;
+                        }
+                    </style>
+
+                    <form method="POST" action="{{ route('admin.categories.update', $category) }}">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="form-group">
+                            <label for="name" class="form-label">Category Name *</label>
+                            <input type="text"
+                                   id="name"
+                                   name="name"
+                                   value="{{ old('name', $category->name) }}"
+                                   class="form-input @error('name') error @enderror"
+                                   placeholder="Enter category name"
+                                   required>
+                            @error('name')
+                                <p class="error-text">{{ $message }}</p>
+                            @enderror
                         </div>
-                        <form method="POST" action="{{ route('admin.categories.update', $category) }}" class="p-6">
-                            @csrf
-                            @method('PUT')
-                            <!-- Category Name -->
-                            <div class="mb-6">
-                                <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Category Name *
-                                </label>
-                                <input type="text"
-                                       id="name"
-                                       name="name"
-                                       value="{{ old('name', $category->name) }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-pink-100 focus:border-pink-400 transition-all duration-200 @error('name') border-red-500 @enderror"
-                                       placeholder="Enter category name"
-                                       required>
-                                @error('name')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">Description (Optional)</label>
+                            <textarea name="description" id="description" rows="3"
+                                      class="form-textarea @error('description') error @enderror"
+                                      placeholder="Describe this category (optional)">{{ old('description', $category->description) }}</textarea>
+                            <p style="margin-top: 4px; color: #6b7280; font-size: 14px;">Provide a brief description of what this category contains</p>
+                            @error('description')
+                                <p class="error-text">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Current Stats -->
+                        <div class="stats-box">
+                            <h3 style="font-weight: 600; color: #fe8a8b; margin-bottom: 12px;">Current Statistics</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 14px;">
+                                <div>
+                                    <span style="color: #6b7280;">Videos:</span>
+                                    <span style="font-weight: 600; color: #fe8a8b;">{{ $category->videos()->count() }}</span>
+                                </div>
+                                <div>
+                                    <span style="color: #6b7280;">Created:</span>
+                                    <span style="font-weight: 600; color: #fe8a8b;">{{ $category->created_at->format('M d, Y') }}</span>
+                                </div>
                             </div>
-                            <!-- Description -->
-                            <div class="mb-6">
-                                <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Description (Optional)
-                                </label>
-                                <textarea name="description" id="description" rows="3"
-                                          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-pink-100 focus:border-pink-400 transition-all duration-200 @error('description') border-red-500 @enderror"
-                                          placeholder="Describe this category (optional)">{{ old('description', $category->description) }}</textarea>
-                                @error('description')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <!-- Action Buttons -->
-                            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
-                                <a href="{{ route('admin.categories.index') }}"
-                                   class="px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-colors duration-200">
-                                    Cancel
-                                </a>
-                                <button type="submit"
-                                        class="px-6 py-3 bg-gradient-to-r from-pink-400 to-yellow-300 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
-                                    Update Category
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+
+                        <div style="display: flex; gap: 16px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+                            <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Update Category
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

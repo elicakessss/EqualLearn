@@ -27,11 +27,13 @@ class VideoController extends Controller
     {
         $video->update(['is_approved' => true]);
 
-        return redirect()->back()->with('success', "Video '{$video->title}' has been approved!");
+        return redirect()->route('admin.videos.index')->with('success', "Video '{$video->title}' has been approved!");
     }
 
     public function reject(Video $video)
     {
+        $videoTitle = $video->title; // Store title before deletion
+        
         // Delete the video files
         if ($video->video_url && file_exists(storage_path('app/public/' . $video->video_url))) {
             unlink(storage_path('app/public/' . $video->video_url));
@@ -43,13 +45,13 @@ class VideoController extends Controller
         // Delete the video record
         $video->delete();
 
-        return redirect()->back()->with('success', "Video '{$video->title}' has been rejected and deleted!");
+        return redirect()->route('admin.videos.index')->with('success', "Video '{$videoTitle}' has been rejected and deleted!");
     }
 
     public function unapprove(Video $video)
     {
         $video->update(['is_approved' => false]);
 
-        return redirect()->back()->with('success', "Video '{$video->title}' has been unapproved!");
+        return redirect()->route('admin.videos.index')->with('success', "Video '{$video->title}' has been unapproved!");
     }
 }

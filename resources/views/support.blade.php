@@ -1,4 +1,6 @@
-<x-app-layout>    <div class="py-12 text-center">        <!-- Combined Hero & About Us Section -->
+<x-app-layout>
+    <div class="py-12 text-center">
+        <!-- Combined Hero & About Us Section -->
         <div style="background: linear-gradient(135deg, #fff7c2 0%, #ffd5de 100%); border-radius: 20px; padding: 30px; margin-bottom: 40px; box-shadow: 0 8px 25px rgba(254, 138, 139, 0.08); border: 1.5px solid #f6e6e6; max-width: 1200px; margin-left: auto; margin-right: auto; transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s;" onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.boxShadow='0 12px 32px 0 rgba(254, 138, 139, 0.14), 0 2px 10px 0 rgba(208, 230, 250, 0.12)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 25px rgba(254, 138, 139, 0.08)';">
             <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: center;">
                 <!-- Left side: Image -->
@@ -7,7 +9,7 @@
                          alt="EqualLearn" 
                          style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
                 </div>
-                  <!-- Right side: Text Content -->
+                <!-- Right side: Text Content -->
                 <div style="text-align: left;">
                     <h1 style="font-family: 'Quicksand', sans-serif; font-size: 2.2rem; font-weight: 700; color: #fe8a8b; margin-bottom: 12px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">Support EqualLearn!</h1>
                     <p style="font-size: 1.1rem; color: #55565a; margin-bottom: 20px; line-height: 1.6;">Help us create amazing educational content for children around the world</p>
@@ -17,7 +19,9 @@
                     </p>
                 </div>
             </div>
-        </div>        <!-- Two Column Layout -->
+        </div>
+        
+        <!-- Two Column Layout -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto 40px auto;">
             <!-- Donation Section -->
             <div style="background: linear-gradient(135deg, #fff7c2 0%, #ffd5de 100%); border-radius: 20px; box-shadow: 0 6px 24px 0 rgba(254, 138, 139, 0.08), 0 1px 6px 0 rgba(208, 230, 250, 0.10); border: 1.5px solid #f6e6e6; padding: 24px; text-align: center; transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s;" onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.boxShadow='0 12px 32px 0 rgba(254, 138, 139, 0.14), 0 2px 10px 0 rgba(208, 230, 250, 0.12)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 24px 0 rgba(254, 138, 139, 0.08), 0 1px 6px 0 rgba(208, 230, 250, 0.10)';">
@@ -27,14 +31,17 @@
                     Help us continue providing free educational content to children in rural areas.
                 </p>
                 <div style="background: rgba(255, 255, 255, 0.6); border-radius: 8px; padding: 12px; border: 1px solid #ffd5de;">
-                    <p style="font-size: 0.8rem; color: #1c1e21; margin-bottom: 6px; font-weight: 600;">Payment Details:</p>                    <p style="font-size: 0.75rem; color: #65676b; margin: 2px 0; line-height: 1.3;">
+                    <p style="font-size: 0.8rem; color: #1c1e21; margin-bottom: 6px; font-weight: 600;">Payment Details:</p>
+                    <p style="font-size: 0.75rem; color: #65676b; margin: 2px 0; line-height: 1.3;">
                         <strong>GCash:</strong> 09157607995 - Catherine Tejano
                     </p>
                     <p style="font-size: 0.75rem; color: #65676b; margin: 2px 0; line-height: 1.3;">
                         <strong>BDO Bank:</strong> 0120 3023 4873
                     </p>
                 </div>
-            </div>            <!-- Premium Access Section -->
+            </div>
+            
+            <!-- Premium Access Section -->
             <div style="background: linear-gradient(135deg, #fff7c2 0%, #ffd5de 100%); border-radius: 20px; box-shadow: 0 6px 24px 0 rgba(254, 138, 139, 0.08), 0 1px 6px 0 rgba(208, 230, 250, 0.10); border: 1.5px solid #f6e6e6; padding: 24px; text-align: center; transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s;" onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.boxShadow='0 12px 32px 0 rgba(254, 138, 139, 0.14), 0 2px 10px 0 rgba(208, 230, 250, 0.12)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 24px 0 rgba(254, 138, 139, 0.08), 0 1px 6px 0 rgba(208, 230, 250, 0.10)';">
                 <div style="font-size: 2rem; margin-bottom: 8px;">⭐</div>
                 <h2 style="font-family: 'Quicksand', sans-serif; font-size: 1.25rem; font-weight: 600; color: #1c1e21; margin-bottom: 8px;">Premium Access</h2>
@@ -79,7 +86,9 @@
                 <span>Back to Home</span>
             </a>
         </div>
-    </div>    <style>
+    </div>
+    
+    <style>
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -98,7 +107,9 @@
             div[style*="grid-template-columns: 1fr 1fr"] {
                 grid-template-columns: 1fr !important;
                 gap: 20px !important;
-            }            div[style*="padding: 24px"] {
+            }
+            
+            div[style*="padding: 24px"] {
                 padding: 20px !important;
             }
             
@@ -108,7 +119,9 @@
             
             h1[style*="font-size: 2.2rem"] {
                 font-size: 1.8rem !important;
-            }            h2[style*="font-size: 1.25rem"] {
+            }
+            
+            h2[style*="font-size: 1.25rem"] {
                 font-size: 1.1rem !important;
             }
             
