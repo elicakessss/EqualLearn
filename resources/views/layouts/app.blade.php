@@ -1029,7 +1029,7 @@
                         </button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="button button-primary">
+                    <a href="{{ route('welcome') }}" class="button button-primary">
                         <i class="fas fa-sign-in-alt"></i>
                         <span>Sign In</span>
                     </a>

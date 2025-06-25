@@ -10,8 +10,10 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-                ->name('login');
+    // Redirect login GET requests to welcome page (which has the login form)
+    Route::get('login', function() {
+        return redirect()->route('welcome');
+    })->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 });

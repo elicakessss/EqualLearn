@@ -3,18 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'EqualLearn') }} - Login - UPDATED VERSION</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <meta name="cache-bust" content="{{ time() }}" />
+    <title>{{ config('app.name', 'EqualLearn') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Bubblegum+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <script>
-        // Force reload if cached
-        if (performance.navigation.type == 1) {
-            location.reload(true);
-        }
-    </script>
     <style>
         * {
             margin: 0;
@@ -22,13 +12,12 @@
             box-sizing: border-box;
         }
 
-        html, body#login-page {
+        body {
             font-family: 'Quicksand', sans-serif;
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #ffd5de 0%, #d0e6fa 40%, #d0f7d6 70%, #fff7c2 100%) !important;
-            background-attachment: fixed !important;
+            background: #f0f2f5;
         }
 
         .main-container {
@@ -57,20 +46,9 @@
             font-family: 'Bubblegum Sans', cursive;
             font-size: 4rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #ff6b9d 0%, #ffc3a0 100%) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-            background-clip: text !important;
+            color: #667eea;
             margin-bottom: 1rem;
             line-height: 1;
-            text-shadow: 2px 2px 10px rgba(255, 107, 157, 0.8) !important;
-            animation: pulse 2s infinite !important;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
         }
 
         .hero-headline {
@@ -96,18 +74,11 @@
         }
 
         .feature-card {
-            background: linear-gradient(135deg, #fff7c2 0%, #ffd5de 100%);
-            border-radius: 20px;
-            box-shadow: 0 6px 24px 0 rgba(254, 138, 139, 0.08), 0 1px 6px 0 rgba(208, 230, 250, 0.10);
-            border: 1.5px solid #f6e6e6;
+            background: white;
             padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
-            transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 12px 32px 0 rgba(254, 138, 139, 0.14), 0 2px 10px 0 rgba(208, 230, 250, 0.12);
         }
 
         .feature-icon {
@@ -132,67 +103,65 @@
         }
 
         .login-form {
-            background: linear-gradient(135deg, #fff7c2 0%, #ffd5de 100%);
-            border-radius: 28px;
-            box-shadow: 0 8px 32px 0 rgba(254, 138, 139, 0.08), 0 1.5px 8px 0 rgba(208, 230, 250, 0.10);
-            border: 1.5px solid #f6e6e6;
-            padding: 32px 28px 28px 28px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+        }        .login-form {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
             width: 100%;
         }
 
         .form-group {
-            margin-bottom: 1.1rem;
+            margin-bottom: 1rem;
         }
 
-        .form-group label {
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 700;
-            color: #fe8a8b;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
-            border: 1.5px solid #ffd5de;
-            border-radius: 12px;
-            padding: 10px 14px;
-            font-size: 1rem;
-            background: #fff;
-            color: #fe8a8b;
-            font-weight: 600;
-            font-family: 'Quicksand', sans-serif;
-            transition: border 0.2s;
+            padding: 14px 16px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            font-size: 17px;
+            line-height: 16px;
+            background: #f5f6f7;
+            color: #1c1e21;
+            transition: all 0.2s ease;
         }
 
-        .form-group input:focus {
-            border: 1.5px solid #fe8a8b;
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
         }
 
         .form-group input::placeholder {
-            color: #fe8a8b;
-            opacity: 0.8;
+            color: #8a8d91;
+            font-size: 17px;
         }
 
         .login-btn {
-            background: linear-gradient(90deg, #fe8a8b 0%, #fff7c2 100%);
-            color: #fff;
-            font-weight: 700;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-size: 1.1rem;
             width: 100%;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 8px 0 rgba(254, 138, 139, 0.10);
-            transition: background 0.2s, color 0.2s;
+            padding: 12px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 20px;
+            font-weight: 700;
             cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-bottom: 1rem;
         }
 
         .login-btn:hover {
-            background: linear-gradient(90deg, #fff7c2 0%, #fe8a8b 100%);
-            color: #fe8a8b;
+            background: #5a6fd8;
         }
 
         .forgot-password {
@@ -220,23 +189,20 @@
             width: auto;
             margin: 0 auto;
             padding: 12px 24px;
-            background: linear-gradient(90deg, #42b883 0%, #a8e6cf 100%);
+            background: #42b883;
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            border-radius: 6px;
+            font-size: 17px;
             font-weight: 700;
             text-decoration: none;
             text-align: center;
             cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-            box-shadow: 0 2px 8px 0 rgba(66, 184, 131, 0.10);
+            transition: background-color 0.2s ease;
         }
 
         .create-account-btn:hover {
-            background: linear-gradient(90deg, #a8e6cf 0%, #42b883 100%);
-            color: #42b883;
-            text-decoration: none;
+            background: #369870;
         }
 
         .footer-text {
@@ -244,6 +210,15 @@
             margin-top: 2rem;
             font-size: 14px;
             color: #65676b;
+        }
+
+        .footer-text a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
         }
 
         .alert {
@@ -261,6 +236,12 @@
             margin: 0;
         }
 
+        .text-danger {
+            color: #c33;
+            font-size: 14px;
+            margin-top: 0.25rem;
+        }
+
         /* Responsive Design */
         @media (max-width: 980px) {
             .content-wrapper {
@@ -268,32 +249,50 @@
                 gap: 2rem;
                 text-align: center;
             }
-
+            
             .hero-section {
                 max-width: 400px;
             }
-
+            
             .brand-logo {
                 font-size: 3rem;
             }
-
+            
             .hero-headline {
                 font-size: 1.5rem;
             }
-
+            
             .features-grid {
                 grid-template-columns: 1fr;
             }
-
+            
             .login-section {
                 flex: none;
                 max-width: 400px;
                 width: 100%;
             }
         }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .login-form {
+                padding: 1.5rem;
+            }
+            
+            .brand-logo {
+                font-size: 2.5rem;
+            }
+            
+            .hero-headline {
+                font-size: 1.3rem;
+            }
+        }
     </style>
 </head>
-<body id="login-page">
+<body>
     <div class="main-container">
         <div class="content-wrapper">
             <!-- Left Side - Marketing Content -->
@@ -303,7 +302,7 @@
                 <p class="hero-description">
                     EqualLearn helps you connect and share educational content with the people in your learning community.
                 </p>
-
+                
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon">📚</div>
@@ -331,53 +330,7 @@
             <!-- Right Side - Login Form -->
             <div class="login-section">
                 <div class="login-form">
-                    @if(session('status'))
-                        <div class="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    @if($errors->any())
-                        <div class="alert">
-                            <ul>
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    <form action="{{ route('login') }}" method="POST">
-                        @csrf
-
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input id="email" name="email" type="email" autocomplete="email" required
-                                   value="{{ old('email') }}" placeholder="Enter your email address">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input id="password" name="password" type="password" autocomplete="current-password"
-                                   required placeholder="Enter your password">
-                        </div>
-
-                        <button type="submit" class="login-btn">Log In</button>
-                    </form>
-
-                    <div class="forgot-password">
-                        <a href="{{ route('password.request') }}">Forgotten password?</a>
-                    </div>
-
-                    <div class="divider"></div>
-
-                    <div style="text-align: center;">
-                        <a href="{{ route('register') }}" class="create-account-btn">Create New Account</a>
-                    </div>
-
-                    <div class="footer-text">
-                        <strong>Create a Page</strong> for a celebrity, brand or business.
-                    </div>
+                    {{ $slot }}
                 </div>
             </div>
         </div>

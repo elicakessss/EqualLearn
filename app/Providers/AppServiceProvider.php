@@ -25,5 +25,6 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::component('app-layout', \App\View\Components\AppLayout::class);
         Blade::component('auth-layout', \App\View\Components\AuthLayout::class);
+        Blade::component('auth-layout-fixed', \App\View\Components\AuthLayoutFixed::class);
     }
 }
