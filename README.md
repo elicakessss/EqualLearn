@@ -46,7 +46,3 @@ EqualLearn is built to serve as a centralized platform for educational content. 
 
 ---
 
-## Installation
-1. Clone the repository:
-```sh
-git clone https://github.com/your-username/equallearn.git
