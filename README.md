@@ -19,6 +19,17 @@ EqualLearn is built to serve as a centralized platform for educational content. 
 
 ---
 
+## Screenshots
+
+![Screenshots of EqualLearn](public/image/equallearn_landing.png)
+![Screenshots of EqualLearn](public/image/equallearn_v1.1.png)
+![Screenshots of EqualLearn](public/image/equallearn_v1.2.png)
+![Screenshots of EqualLearn](public/image/equallearn_v1.3.png)
+![Screenshots of EqualLearn](public/image/equallearn_v1.5.png)
+![Screenshots of EqualLearn](public/image/equallearn_v1.png)
+
+---
+
 ## Features
 - **Teacher Uploads:** Upload videos and learning materials easily.
 - **Student Access:** Secure viewing environment for students.
